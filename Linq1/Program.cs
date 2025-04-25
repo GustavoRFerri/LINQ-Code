@@ -12,10 +12,37 @@ namespace Linq1
         {
             //int[] numbers = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             //OddNumbers(numbers);
-
             UniversityManager universityManager = new UniversityManager();
             universityManager.MalesStudents();
             universityManager.FemaleStudents();
+            universityManager.SortStudentByAge();
+            universityManager.AllStudentsFromBeijingTech();
+
+            int[] someInts = { 30, 12, 4, 3, 12 };
+            IEnumerable<int> sortedInts2 = from i in someInts orderby i select i;
+            IEnumerable<int> reversedInts = sortedInts2.Reverse();
+
+            foreach (int i in reversedInts)
+            {
+                Console.WriteLine(i);
+            }
+
+            IEnumerable<int> reversedSprtedInts = from i in someInts orderby i descending select i;
+            foreach (int i in reversedSprtedInts)
+            {
+                Console.WriteLine(i);
+            }
+
+            Console.WriteLine("Insira o ID of university ");
+            int imputAsInt = Convert.ToInt32(Console.ReadLine());
+            try
+            {
+                universityManager.AllStudentsFromThatUni(imputAsInt);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Wrong value!! Error {0}",ex.ToString());
+            }            
 
             Console.ReadKey();            
         }
@@ -23,7 +50,6 @@ namespace Linq1
         static void OddNumbers(int[] numbers)
         {
             Console.WriteLine("Odd Numbers: ");
-
             IEnumerable<int> oddNumbers = from number in numbers where number % 2 != 0 select number;
 
             Console.WriteLine(oddNumbers);
@@ -46,15 +72,15 @@ namespace Linq1
 
             // Let´s add University
             listUniversities.Add(new University { Id = 1, Name = "Yale" });
-            listUniversities.Add(new University { Id = 2, Name = "Baijing Tach" });
+            listUniversities.Add(new University { Id = 2, Name = "Beijing Tech" });
 
             // Let´s add some Students
-            listStudents.Add(new Student { Id = 1, Name = "Carla", Gender = "female", Age = 17, University = 1 });
-            listStudents.Add(new Student { Id = 2, Name = "Toni", Gender = "male", Age = 21, University = 1 });
-            listStudents.Add(new Student { Id = 2, Name = "Frank", Gender = "male", Age = 22, University = 2 });
-            listStudents.Add(new Student { Id = 3, Name = "Leyla", Gender = "female", Age = 19, University = 2 });
-            listStudents.Add(new Student { Id = 4, Name = "James", Gender = "trans-gender", Age = 25, University = 2 });
-            listStudents.Add(new Student { Id = 5, Name = "linda", Gender = "female", Age = 22, University = 2 });
+            listStudents.Add(new Student { Id = 1, Name = "Carla", Gender = "female", Age = 17, UniversityId = 1 });
+            listStudents.Add(new Student { Id = 2, Name = "Toni", Gender = "male", Age = 21, UniversityId = 1 });
+            listStudents.Add(new Student { Id = 2, Name = "Frank", Gender = "male", Age = 22, UniversityId = 2 });
+            listStudents.Add(new Student { Id = 3, Name = "Leyla", Gender = "female", Age = 19, UniversityId = 2 });
+            listStudents.Add(new Student { Id = 4, Name = "James", Gender = "trans-gender", Age = 25, UniversityId = 2 });
+            listStudents.Add(new Student { Id = 5, Name = "linda", Gender = "female", Age = 22, UniversityId = 2 });
         }
 
         public void MalesStudents()
@@ -76,6 +102,49 @@ namespace Linq1
                 item.Print();
             }
         }
+
+        public void SortStudentByAge()
+        {
+            var sortedStudents = from students in listStudents orderby students.Age select students;
+            Console.WriteLine("Sorted students by Age");
+            foreach (Student item in sortedStudents)
+            {
+                item.Print();
+            }
+        }
+
+
+        public void AllStudentsFromBeijingTech()
+        {
+            IEnumerable<Student> bjtStudents = from student in listStudents
+                                               join university in listUniversities on student.UniversityId equals university.Id
+                                               where university.Name == "Beijing Tech"
+                                               select student;
+
+            Console.WriteLine("Students from Beijing Tech");
+            foreach (Student item in bjtStudents)
+            {
+                item.Print();
+            }
+        }
+
+        public void AllStudentsFromThatUni(int id)
+        {
+            IEnumerable<Student> bjtStudents = from student in listStudents
+                                               join university in listUniversities on student.UniversityId equals university.Id
+                                               where university.Id == id
+                                               select student;
+
+            Console.WriteLine("Students from that uni {0}",id);
+            foreach (Student item in bjtStudents)
+            {
+                item.Print();
+            }
+        }
+
+
+
+
     }
 
 
@@ -99,11 +168,11 @@ namespace Linq1
         public int Age { get; set; }
 
         // Foreign Key
-        public int University { get; set; }
+        public int UniversityId { get; set; }
 
         public void Print()
         {
-            Console.WriteLine("Student {0} with Id {1}, Gender (2) and Age{3} from University with the Id {4} ", Name, Id, Gender, Age, University);
+            Console.WriteLine("Student: {0} with Id: {1}, Gender: {2} and Age: {3} from University with the Id: {4} ", Name, Id, Gender, Age, UniversityId);
         }
     }
 
