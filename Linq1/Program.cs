@@ -18,20 +18,22 @@ namespace Linq1
             universityManager.SortStudentByAge();
             universityManager.AllStudentsFromBeijingTech();
 
-            int[] someInts = { 30, 12, 4, 3, 12 };
-            IEnumerable<int> sortedInts2 = from i in someInts orderby i select i;
-            IEnumerable<int> reversedInts = sortedInts2.Reverse();
+            universityManager.StudentAndUniversityNameColletction();
 
-            foreach (int i in reversedInts)
-            {
-                Console.WriteLine(i);
-            }
+            //int[] someInts = { 30, 12, 4, 3, 12 };
+            //IEnumerable<int> sortedInts2 = from i in someInts orderby i select i;
+            //IEnumerable<int> reversedInts = sortedInts2.Reverse();
 
-            IEnumerable<int> reversedSprtedInts = from i in someInts orderby i descending select i;
-            foreach (int i in reversedSprtedInts)
-            {
-                Console.WriteLine(i);
-            }
+            //foreach (int i in reversedInts)
+            //{
+            //    Console.WriteLine(i);
+            //}
+
+            //IEnumerable<int> reversedSprtedInts = from i in someInts orderby i descending select i;
+            //foreach (int i in reversedSprtedInts)
+            //{
+            //    Console.WriteLine(i);
+            //}
 
             Console.WriteLine("Insira o ID of university ");
             int imputAsInt = Convert.ToInt32(Console.ReadLine());
@@ -105,7 +107,9 @@ namespace Linq1
 
         public void SortStudentByAge()
         {
-            var sortedStudents = from students in listStudents orderby students.Age select students;
+            var sortedStudents = from students in listStudents 
+                                 orderby students.Age 
+                                 select students;
             Console.WriteLine("Sorted students by Age");
             foreach (Student item in sortedStudents)
             {
@@ -143,7 +147,20 @@ namespace Linq1
         }
 
 
+        public void StudentAndUniversityNameColletction()
+        {
+            var newCollection = from student in listStudents
+                                join university in listUniversities on student.UniversityId equals university.Id
+                                orderby student.Name
+                                select new { StudentName = student.Name, UniversityName = university.Name };
 
+            Console.WriteLine("New Collection: ");
+
+            foreach (var item in newCollection)
+            {
+                Console.WriteLine("Student {0} from University {1}", item.StudentName, item.UniversityName);
+            }
+        }
 
     }
 
